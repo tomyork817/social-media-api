@@ -1,0 +1,8 @@
+type Comment {
+    id: ID!
+    userID: ID!
+    postID: ID!
+    parentID: ID!
+    body: String!
+    comments: [Comment!]
+}
