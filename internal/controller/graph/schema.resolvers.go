@@ -19,6 +19,7 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input model.PostInput
 	return r.PostUseCase.Create(ctx, models.Post{
 		UserID: input.UserID,
 		Body:   input.Body,
+		IsOpen: true,
 	})
 }
 

@@ -20,9 +20,12 @@ func (uc *CommentUseCase) Create(ctx context.Context, comment models.Comment) (*
 	if post == nil {
 		return nil, models.ErrNotFound
 	}
+	if !post.IsOpen {
+		return nil, models.ErrPostCommentsDisabled
+	}
 	if comment.ParentID != 0 {
 		parent, _ := uc.commentRepo.GetByID(ctx, comment.ParentID)
-		if parent == nil {
+		if parent == nil || parent.PostID != postID {
 			return nil, models.ErrNotFound
 		}
 	}

@@ -11,4 +11,5 @@ var (
 	ErrIncorrectCommentInput    = errors.New("incorrect comment input")
 	ErrIncorrectSubCommentInput = errors.New("incorrect subcomment input")
 	ErrIncorrectIdFormat        = errors.New("incorrect id format")
+	ErrPostCommentsDisabled     = errors.New("cant comment post - comments are disabled")
 )

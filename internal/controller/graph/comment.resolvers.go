@@ -15,7 +15,7 @@ func (r *commentResolver) Replies(ctx context.Context, obj *models.Comment, limi
 	if *limit <= 0 || *offset < 0 {
 		return nil, models.ErrIncorrectPaging
 	}
-	return r.CommentUseCase.GetMultiple(ctx, models.CommentFilter{ParentID: obj.ParentID}, *limit, *offset)
+	return r.CommentUseCase.GetMultiple(ctx, models.CommentFilter{ParentID: obj.ID}, *limit, *offset)
 }
 
 // Comment returns generated.CommentResolver implementation.
