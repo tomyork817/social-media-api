@@ -13,8 +13,10 @@ type Router struct {
 	Multiplexer   *http.ServeMux
 }
 
-func NewRouter(post usecase.Post) *Router {
-	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &Resolver{PostUseCase: post}}))
+func NewRouter(post usecase.Post, comment usecase.Comment) *Router {
+	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{
+		Resolvers: &Resolver{PostUseCase: post, CommentUseCase: comment},
+	}))
 	mux := http.NewServeMux()
 
 	mux.Handle("/", playground.Handler("GraphQL playground", "/query"))

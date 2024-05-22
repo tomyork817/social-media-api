@@ -7,7 +7,7 @@ type Post {
 }
 
 input PostFilter {
-    id: ID!
+    userID: ID!
 }
 
 input PostInput {

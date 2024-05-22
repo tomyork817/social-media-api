@@ -6,7 +6,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 	"social-media-api/internal/controller/graph/generated"
 	"social-media-api/internal/controller/graph/model"
 	"social-media-api/internal/models"
@@ -14,37 +13,89 @@ import (
 
 // CreatePost is the resolver for the createPost field.
 func (r *mutationResolver) CreatePost(ctx context.Context, input model.PostInput) (*models.Post, error) {
-	panic(fmt.Errorf("not implemented: CreatePost - createPost"))
+	if input.UserID <= 0 || len(input.Body) > models.PostBodyMaxLength {
+		return nil, models.ErrIncorrectPostInput
+	}
+	return r.PostUseCase.Create(ctx, models.Post{
+		UserID: input.UserID,
+		Body:   input.Body,
+	})
 }
 
 // CreateComment is the resolver for the createComment field.
 func (r *mutationResolver) CreateComment(ctx context.Context, input model.CommentInput) (*models.Comment, error) {
-	panic(fmt.Errorf("not implemented: CreateComment - createComment"))
+	if input.UserID <= 0 || input.PostID <= 0 || len(input.Body) > models.CommentBodyMaxLength {
+		return nil, models.ErrIncorrectCommentInput
+	}
+	return r.CommentUseCase.Create(ctx, models.Comment{
+		UserID: input.UserID,
+		PostID: input.PostID,
+		Body:   input.Body,
+	})
 }
 
 // CreateSubComment is the resolver for the createSubComment field.
 func (r *mutationResolver) CreateSubComment(ctx context.Context, input model.SubCommentInput) (*models.Comment, error) {
-	panic(fmt.Errorf("not implemented: CreateSubComment - createSubComment"))
+	if input.UserID <= 0 || input.PostID <= 0 || input.ParentID <= 0 || len(input.Body) > models.CommentBodyMaxLength {
+		return nil, models.ErrIncorrectSubCommentInput
+	}
+	return r.CommentUseCase.Create(ctx, models.Comment{
+		UserID:   input.UserID,
+		PostID:   input.PostID,
+		ParentID: input.PostID,
+		Body:     input.Body,
+	})
 }
 
 // DisableComments is the resolver for the disableComments field.
 func (r *mutationResolver) DisableComments(ctx context.Context, postID int) (*models.Post, error) {
-	panic(fmt.Errorf("not implemented: DisableComments - disableComments"))
+	if postID <= 0 {
+		return nil, models.ErrIncorrectIdFormat
+	}
+	return r.PostUseCase.DisableComments(ctx, postID)
 }
 
 // EnableComments is the resolver for the enableComments field.
 func (r *mutationResolver) EnableComments(ctx context.Context, postID int) (*models.Post, error) {
-	panic(fmt.Errorf("not implemented: EnableComments - enableComments"))
+	if postID <= 0 {
+		return nil, models.ErrIncorrectIdFormat
+	}
+	return r.PostUseCase.EnableComments(ctx, postID)
 }
 
 // Posts is the resolver for the posts field.
 func (r *queryResolver) Posts(ctx context.Context, filter *models.PostFilter, limit *int, offset *int) ([]*models.Post, error) {
-	panic(fmt.Errorf("not implemented: Posts - posts"))
+	if *limit <= 0 || *offset < 0 {
+		return nil, models.ErrIncorrectPaging
+	}
+	if filter == nil {
+		return r.PostUseCase.GetMultiple(ctx, models.PostFilter{}, *limit, *offset)
+	}
+	return r.PostUseCase.GetMultiple(ctx, *filter, *limit, *offset)
+}
+
+// Post is the resolver for the post field.
+func (r *queryResolver) Post(ctx context.Context, id int) (*models.Post, error) {
+	if id <= 0 {
+		return nil, models.ErrIncorrectIdFormat
+	}
+	return r.PostUseCase.GetById(ctx, id)
 }
 
 // Comments is the resolver for the comments field.
-func (r *queryResolver) Comments(ctx context.Context, filter *models.CommentFilter, limit *int, offset *int) ([]*models.Comment, error) {
-	panic(fmt.Errorf("not implemented: Comments - comments"))
+func (r *queryResolver) Comments(ctx context.Context, filter models.CommentFilter, limit *int, offset *int) ([]*models.Comment, error) {
+	if *limit <= 0 || *offset < 0 {
+		return nil, models.ErrIncorrectPaging
+	}
+	return r.CommentUseCase.GetMultiple(ctx, filter, *limit, *offset)
+}
+
+// Comment is the resolver for the comment field.
+func (r *queryResolver) Comment(ctx context.Context, id int) (*models.Comment, error) {
+	if id <= 0 {
+		return nil, models.ErrIncorrectIdFormat
+	}
+	return r.CommentUseCase.GetById(ctx, id)
 }
 
 // Mutation returns generated.MutationResolver implementation.

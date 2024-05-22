@@ -21,6 +21,7 @@ type Query struct {
 
 type SubCommentInput struct {
 	UserID   int    `json:"userID"`
+	PostID   int    `json:"postID"`
 	ParentID int    `json:"parentID"`
 	Body     string `json:"body"`
 }

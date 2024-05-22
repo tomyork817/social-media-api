@@ -6,14 +6,16 @@ package graph
 
 import (
 	"context"
-	"fmt"
 	"social-media-api/internal/controller/graph/generated"
 	"social-media-api/internal/models"
 )
 
 // Comments is the resolver for the comments field.
 func (r *postResolver) Comments(ctx context.Context, obj *models.Post, limit *int, offset *int) ([]*models.Comment, error) {
-	panic(fmt.Errorf("not implemented: Comments - comments"))
+	if *limit <= 0 || *offset < 0 {
+		return nil, models.ErrIncorrectPaging
+	}
+	return r.CommentUseCase.GetMultiple(ctx, models.CommentFilter{PostID: obj.ID}, *limit, *offset)
 }
 
 // Post returns generated.PostResolver implementation.

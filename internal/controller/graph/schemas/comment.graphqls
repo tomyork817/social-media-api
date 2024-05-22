@@ -2,13 +2,12 @@ type Comment {
     id: ID!
     userID: ID!
     postID: ID!
-    parentID: ID!
+    parentID: ID
     body: String!
     replies(limit: Int = 10, offset: Int = 0): [Comment!]!
 }
 
 input CommentFilter {
-    id: ID
     postID: ID
     parentID: ID
 }
@@ -21,6 +20,7 @@ input CommentInput {
 
 input SubCommentInput {
     userID: ID!
+    postID: ID!
     parentID: ID!
     body: String!
 }

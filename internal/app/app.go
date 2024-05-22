@@ -21,10 +21,13 @@ func Run(cfg *config.Config) {
 	}
 	defer pg.Close()
 
-	repo := inmemory.NewPostInMemory()
-	uc := usecase.NewPostUseCase(repo)
-	router := graph.NewRouter(uc)
+	postRepo := inmemory.NewPostInMemory()
+	commentRepo := inmemory.NewCommentInMemory()
 
+	postUC := usecase.NewPostUseCase(postRepo)
+	commentUC := usecase.NewCommentUseCase(commentRepo, postRepo)
+
+	router := graph.NewRouter(postUC, commentUC)
 	httpServer := httpserver.New(router.Multiplexer, cfg.HTTP)
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", cfg.HTTP.Port)
