@@ -4,5 +4,23 @@ type Comment {
     postID: ID!
     parentID: ID!
     body: String!
-    comments: [Comment!]
+    replies(limit: Int = 10, offset: Int = 0): [Comment!]!
+}
+
+input CommentFilter {
+    id: ID
+    postID: ID
+    parentID: ID
+}
+
+input CommentInput {
+    userID: ID!
+    postID: ID!
+    body: String!
+}
+
+input SubCommentInput {
+    userID: ID!
+    parentID: ID!
+    body: String!
 }

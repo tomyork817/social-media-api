@@ -1,7 +1,13 @@
 type Query {
-    posts: [Post!]!
+    posts(filter: PostFilter, limit: Int = 10, offset: Int = 0): [Post!]!
+    comments(filter: CommentFilter, limit: Int = 10, offset: Int = 0): [Comment!]!
 }
 
 type Mutation {
-   createPost(input: NewPost!): Post!
+    createPost(input: PostInput!): Post!
+    createComment(input: CommentInput!): Comment!
+    createSubComment(input: SubCommentInput!): Comment!
+
+    disableComments(postID: ID!): Post!
+    enableComments(postID: ID!): Post!
 }

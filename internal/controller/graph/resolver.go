@@ -7,5 +7,6 @@ import "social-media-api/internal/usecase"
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	PostUseCase usecase.Post
+	PostUseCase    usecase.Post
+	CommentUseCase usecase.Comment
 }

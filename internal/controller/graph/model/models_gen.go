@@ -2,13 +2,25 @@
 
 package model
 
+type CommentInput struct {
+	UserID int    `json:"userID"`
+	PostID int    `json:"postID"`
+	Body   string `json:"body"`
+}
+
 type Mutation struct {
 }
 
-type NewPost struct {
+type PostInput struct {
 	UserID int    `json:"userID"`
 	Body   string `json:"body"`
 }
 
 type Query struct {
+}
+
+type SubCommentInput struct {
+	UserID   int    `json:"userID"`
+	ParentID int    `json:"parentID"`
+	Body     string `json:"body"`
 }

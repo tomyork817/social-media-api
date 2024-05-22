@@ -2,23 +2,23 @@ package inmemory
 
 import (
 	"context"
-	"social-media-api/internal/domain"
+	"social-media-api/internal/models"
 	"sync"
 )
 
 type PostInMemory struct {
-	data   map[int]*domain.Post
+	data   map[int]*models.Post
 	lastID int
 	lock   sync.Mutex
 }
 
 func NewPostInMemory() *PostInMemory {
 	return &PostInMemory{
-		data: make(map[int]*domain.Post),
+		data: make(map[int]*models.Post),
 	}
 }
 
-func (r *PostInMemory) Save(ctx context.Context, post domain.Post) (*domain.Post, error) {
+func (r *PostInMemory) Save(ctx context.Context, post models.Post) (*models.Post, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 	r.lastID++
@@ -28,8 +28,8 @@ func (r *PostInMemory) Save(ctx context.Context, post domain.Post) (*domain.Post
 	return r.data[r.lastID], nil
 }
 
-func (r *PostInMemory) GetAll(ctx context.Context) ([]*domain.Post, error) {
-	posts := make([]*domain.Post, 0, len(r.data))
+func (r *PostInMemory) GetAll(ctx context.Context) ([]*models.Post, error) {
+	posts := make([]*models.Post, 0, len(r.data))
 	for _, post := range r.data {
 		posts = append(posts, post)
 	}

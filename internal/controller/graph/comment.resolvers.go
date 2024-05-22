@@ -8,12 +8,12 @@ import (
 	"context"
 	"fmt"
 	"social-media-api/internal/controller/graph/generated"
-	"social-media-api/internal/domain"
+	"social-media-api/internal/models"
 )
 
-// Comments is the resolver for the comments field.
-func (r *commentResolver) Comments(ctx context.Context, obj *domain.Comment) ([]*domain.Comment, error) {
-	panic(fmt.Errorf("not implemented: Comments - comments"))
+// Replies is the resolver for the replies field.
+func (r *commentResolver) Replies(ctx context.Context, obj *models.Comment, limit *int, offset *int) ([]*models.Comment, error) {
+	panic(fmt.Errorf("not implemented: Replies - replies"))
 }
 
 // Comment returns generated.CommentResolver implementation.

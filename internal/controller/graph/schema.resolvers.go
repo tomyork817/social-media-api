@@ -6,22 +6,45 @@ package graph
 
 import (
 	"context"
+	"fmt"
 	"social-media-api/internal/controller/graph/generated"
 	"social-media-api/internal/controller/graph/model"
-	"social-media-api/internal/domain"
+	"social-media-api/internal/models"
 )
 
 // CreatePost is the resolver for the createPost field.
-func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) (*domain.Post, error) {
-	return r.PostUseCase.Create(ctx, domain.Post{
-		UserID: input.UserID,
-		Body:   input.Body,
-	})
+func (r *mutationResolver) CreatePost(ctx context.Context, input model.PostInput) (*models.Post, error) {
+	panic(fmt.Errorf("not implemented: CreatePost - createPost"))
+}
+
+// CreateComment is the resolver for the createComment field.
+func (r *mutationResolver) CreateComment(ctx context.Context, input model.CommentInput) (*models.Comment, error) {
+	panic(fmt.Errorf("not implemented: CreateComment - createComment"))
+}
+
+// CreateSubComment is the resolver for the createSubComment field.
+func (r *mutationResolver) CreateSubComment(ctx context.Context, input model.SubCommentInput) (*models.Comment, error) {
+	panic(fmt.Errorf("not implemented: CreateSubComment - createSubComment"))
+}
+
+// DisableComments is the resolver for the disableComments field.
+func (r *mutationResolver) DisableComments(ctx context.Context, postID int) (*models.Post, error) {
+	panic(fmt.Errorf("not implemented: DisableComments - disableComments"))
+}
+
+// EnableComments is the resolver for the enableComments field.
+func (r *mutationResolver) EnableComments(ctx context.Context, postID int) (*models.Post, error) {
+	panic(fmt.Errorf("not implemented: EnableComments - enableComments"))
 }
 
 // Posts is the resolver for the posts field.
-func (r *queryResolver) Posts(ctx context.Context) ([]*domain.Post, error) {
-	return r.PostUseCase.GetAll(ctx)
+func (r *queryResolver) Posts(ctx context.Context, filter *models.PostFilter, limit *int, offset *int) ([]*models.Post, error) {
+	panic(fmt.Errorf("not implemented: Posts - posts"))
+}
+
+// Comments is the resolver for the comments field.
+func (r *queryResolver) Comments(ctx context.Context, filter *models.CommentFilter, limit *int, offset *int) ([]*models.Comment, error) {
+	panic(fmt.Errorf("not implemented: Comments - comments"))
 }
 
 // Mutation returns generated.MutationResolver implementation.

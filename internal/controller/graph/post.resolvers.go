@@ -8,15 +8,15 @@ import (
 	"context"
 	"fmt"
 	"social-media-api/internal/controller/graph/generated"
-	"social-media-api/internal/domain"
+	"social-media-api/internal/models"
 )
 
 // Comments is the resolver for the comments field.
-func (r *postResolver) Comments(ctx context.Context, obj *domain.Post) ([]*domain.Comment, error) {
+func (r *postResolver) Comments(ctx context.Context, obj *models.Post, limit *int, offset *int) ([]*models.Comment, error) {
 	panic(fmt.Errorf("not implemented: Comments - comments"))
 }
 
-// PostUseCase returns generated.PostResolver implementation.
+// Post returns generated.PostResolver implementation.
 func (r *Resolver) Post() generated.PostResolver { return &postResolver{r} }
 
 type postResolver struct{ *Resolver }

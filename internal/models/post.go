@@ -1,4 +1,8 @@
-package domain
+package models
+
+const (
+	PostBodyMaxLength = 3000
+)
 
 type Post struct {
 	ID     int

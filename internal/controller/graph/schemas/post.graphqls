@@ -3,10 +3,14 @@ type Post {
     userID: ID!
     body: String!
     isOpen: Boolean!
-    comments: [Comment!]
+    comments(limit: Int = 10, offset: Int = 0): [Comment!]!
 }
 
-input NewPost {
+input PostFilter {
+    id: ID!
+}
+
+input PostInput {
     userID: ID!
     body: String!
 }

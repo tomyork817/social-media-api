@@ -1,4 +1,8 @@
-package domain
+package models
+
+const (
+	CommentBodyMaxLength = 2000
+)
 
 type Comment struct {
 	ID       int
