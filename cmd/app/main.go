@@ -1,33 +1,16 @@
 package main
 
 import (
-	"github.com/99designs/gqlgen/graphql/handler"
-	"github.com/99designs/gqlgen/graphql/playground"
 	"log"
-	"net/http"
-	"os"
-	"social-media-api/internal/controller/graph"
-	"social-media-api/internal/controller/graph/generated"
-	"social-media-api/internal/infrastructure/inmemory"
-	"social-media-api/internal/usecase"
+	"social-media-api/config"
+	"social-media-api/internal/app"
 )
 
-const defaultPort = "8080"
-
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = defaultPort
+	cfg, err := config.NewConfig()
+	if err != nil {
+		log.Fatalf("unable to read config: %s", err)
 	}
 
-	repo := inmemory.NewPostInMemory()
-	uc := usecase.NewPostUseCase(repo)
-
-	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{PostUseCase: uc}}))
-
-	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
-
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	app.Run(cfg)
 }
