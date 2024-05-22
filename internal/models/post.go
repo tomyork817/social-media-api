@@ -5,8 +5,8 @@ const (
 )
 
 type Post struct {
-	ID     int
-	UserID int
-	Body   string
-	IsOpen bool
+	ID     int    `db:"id"`
+	UserID int    `db:"user_id"`
+	Body   string `db:"body"`
+	IsOpen bool   `db:"is_open"`
 }

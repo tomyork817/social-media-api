@@ -8,3 +8,6 @@ postgres:
   dbname: 'postgres'
   sslmode: 'disable'
   poolmax: 5
+
+repository:
+  type: 'postgres'

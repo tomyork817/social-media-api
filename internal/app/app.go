@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"social-media-api/internal/controller/graph"
 	"social-media-api/internal/infrastructure/inmemory"
+	postgres2 "social-media-api/internal/infrastructure/postgres"
 	"social-media-api/internal/usecase"
 	"social-media-api/pkg/config"
 	"social-media-api/pkg/httpserver"
@@ -21,8 +22,19 @@ func Run(cfg *config.Config) {
 	}
 	defer pg.Close()
 
-	postRepo := inmemory.NewPostInMemory()
-	commentRepo := inmemory.NewCommentInMemory()
+	var postRepo usecase.PostRepo
+	var commentRepo usecase.CommentRepo
+
+	switch cfg.Repository.Type {
+	case "postgres":
+		postRepo = postgres2.NewPostPostgres(pg)
+		commentRepo = postgres2.NewCommentPostgres(pg)
+	case "inmemory":
+		postRepo = inmemory.NewPostInMemory()
+		commentRepo = inmemory.NewCommentInMemory()
+	default:
+		log.Fatalf("no type of repo")
+	}
 
 	postUC := usecase.NewPostUseCase(postRepo)
 	commentUC := usecase.NewCommentUseCase(commentRepo, postRepo)
@@ -47,13 +59,4 @@ func Run(cfg *config.Config) {
 	if err = httpServer.Shutdown(); err != nil {
 		slog.Error(err.Error())
 	}
-
-	/*	var greeting string
-		err = pg.Pool.QueryRow(context.Background(), "select 'Hello, world!'").Scan(&greeting)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
-			os.Exit(1)
-		}
-
-		fmt.Println(greeting)*/
 }

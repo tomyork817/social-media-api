@@ -5,9 +5,9 @@ const (
 )
 
 type Comment struct {
-	ID       int
-	UserID   int
-	PostID   int
-	ParentID int
-	Body     string
+	ID       int    `db:"id"`
+	UserID   int    `db:"user_id"`
+	PostID   int    `db:"post_id"`
+	ParentID int    `db:"parent_id"`
+	Body     string `db:"body"`
 }

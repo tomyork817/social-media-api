@@ -7,8 +7,9 @@ import (
 
 type (
 	Config struct {
-		HTTP     `yaml:"http"`
-		Postgres `yaml:"postgres"`
+		HTTP       `yaml:"http"`
+		Postgres   `yaml:"postgres"`
+		Repository `yaml:"repository"`
 	}
 
 	HTTP struct {
@@ -23,6 +24,10 @@ type (
 		DBName   string `env-required:"true" yaml:"dbname"`
 		SSLMode  string `env-required:"true" yaml:"sslmode"`
 		PoolMax  int    `yaml:"poolmax"`
+	}
+
+	Repository struct {
+		Type string `env-required:"true" yaml:"type"`
 	}
 )
 
