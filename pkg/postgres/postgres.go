@@ -22,15 +22,15 @@ type Postgres struct {
 	connTimeout  time.Duration
 }
 
-func New(cfg config.Postgres, opts ...Option) (*Postgres, error) {
+func New(cfg config.Postgres) (*Postgres, error) {
 	pg := &Postgres{
 		maxPoolSize:  _defaultMaxPoolSize,
 		connAttempts: _defaultConnAttempts,
 		connTimeout:  _defaultConnTimeout,
 	}
 
-	for _, opt := range opts {
-		opt(pg)
+	if cfg.PoolMax != 0 {
+		pg.maxPoolSize = cfg.PoolMax
 	}
 
 	databaseUrl := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
