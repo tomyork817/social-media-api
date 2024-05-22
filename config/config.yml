@@ -7,3 +7,4 @@ postgres:
   port: '5432'
   dbname: 'postgres'
   sslmode: 'disable'
+  poolmax: 5

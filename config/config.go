@@ -22,6 +22,7 @@ type (
 		Password string `env-required:"true" env:"PG_PASSWORD"`
 		DBName   string `env-required:"true" yaml:"dbname"`
 		SSLMode  string `env-required:"true" yaml:"sslmode"`
+		PoolMax  int    `yaml:"poolmax"`
 	}
 )
 
