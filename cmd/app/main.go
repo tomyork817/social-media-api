@@ -2,9 +2,13 @@ package main
 
 import (
 	"log"
-	"social-media-api/config"
 	"social-media-api/internal/app"
+	"social-media-api/pkg/config"
 )
+
+/*
+migrate -database "postgres://postgres:qwerty@localhost:5432/postgres?sslmode=disable" -path db/migrations up
+*/
 
 func main() {
 	cfg, err := config.NewConfig()

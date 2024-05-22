@@ -3,8 +3,6 @@ version: '3.9'
 services:
   postgres:
     image: postgres
-    volumes:
-      - ./pg-data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: 'postgres'
       POSTGRES_PASSWORD: 'qwerty'

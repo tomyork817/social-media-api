@@ -8,11 +8,11 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"social-media-api/config"
 	"social-media-api/internal/controller/graph"
 	"social-media-api/internal/controller/graph/generated"
 	"social-media-api/internal/infrastructure/inmemory"
 	"social-media-api/internal/usecase"
+	"social-media-api/pkg/config"
 	"social-media-api/pkg/postgres"
 )
 

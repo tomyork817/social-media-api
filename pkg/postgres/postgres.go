@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"log"
-	"social-media-api/config"
+	"social-media-api/pkg/config"
 	"time"
 )
 
