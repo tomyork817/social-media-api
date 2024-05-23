@@ -89,9 +89,9 @@ repository:
 - GraphQL ручка: http://localhost:8000/graphql
 - GraphQL Playground: http://localhost:8000/
 
-#### Примеры запросов
-
 Спецификация API есть на Graphql Playground.
+
+#### Примеры запросов
 
 ##### Query
 
