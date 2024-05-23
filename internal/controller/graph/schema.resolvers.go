@@ -48,7 +48,7 @@ func (r *mutationResolver) CreateSubComment(ctx context.Context, input model.Sub
 	comment, err := r.CommentUseCase.Create(ctx, models.Comment{
 		UserID:   input.UserID,
 		PostID:   input.PostID,
-		ParentID: input.PostID,
+		ParentID: input.ParentID,
 		Body:     input.Body,
 	})
 	if err != nil {

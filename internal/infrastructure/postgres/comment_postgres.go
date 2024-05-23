@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"github.com/jackc/pgx/v5"
+	"slices"
 	"social-media-api/internal/models"
 	"social-media-api/pkg/postgres"
 )
@@ -23,10 +24,8 @@ func (r *CommentPostgres) Save(ctx context.Context, comment models.Comment) (*mo
 				   			 VALUES ($1, $2, $3, $4)
 				   			 RETURNING id, user_id, post_id, parent_id, body`
 
-	var rows pgx.Rows
-	var err error
 	if comment.ParentID != 0 {
-		rows, err = r.Pool.Query(ctx, subCommentQuery, comment.UserID, comment.PostID, comment.ParentID, comment.Body)
+		rows, err := r.Pool.Query(ctx, subCommentQuery, comment.UserID, comment.PostID, comment.ParentID, comment.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -41,7 +40,7 @@ func (r *CommentPostgres) Save(ctx context.Context, comment models.Comment) (*mo
 	row := r.Pool.QueryRow(ctx, commentQuery, comment.UserID, comment.PostID, comment.Body)
 
 	commentRes := &models.Comment{}
-	err = row.Scan(&commentRes.ID, &commentRes.UserID, &commentRes.PostID, &commentRes.Body)
+	err := row.Scan(&commentRes.ID, &commentRes.UserID, &commentRes.PostID, &commentRes.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +59,11 @@ func (r *CommentPostgres) GetByPostID(ctx context.Context, postID int, limit, of
 		return nil, err
 	}
 
-	comments, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByName[models.Comment])
+	comments, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*models.Comment, error) {
+		comment := &models.Comment{}
+		err := row.Scan(&comment.ID, &comment.UserID, &comment.PostID, &comment.Body)
+		return comment, err
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -88,16 +91,22 @@ func (r *CommentPostgres) GetByParentID(ctx context.Context, parentID int, limit
 }
 
 func (r *CommentPostgres) GetByID(ctx context.Context, id int) (*models.Comment, error) {
-	const query = `SELECT * 
-				   FROM comments
-				   WHERE id = $1`
+	const subCommentQuery = `SELECT *
+				   			 FROM comments
+				   			 WHERE id = $1 AND parent_id IS NOT NULL`
+	const commentQuery = `SELECT id, user_id, post_id, body
+				   		  FROM comments
+				   		  WHERE id = $1 AND parent_id IS NULL`
 
-	rows, err := r.Pool.Query(ctx, query, id)
-	if err != nil {
-		return nil, err
+	rows, err := r.Pool.Query(ctx, subCommentQuery, id)
+	comment, err := pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByName[models.Comment])
+	if err == nil {
+		return comment, nil
 	}
 
-	comment, err := pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByName[models.Comment])
+	row := r.Pool.QueryRow(ctx, commentQuery, id)
+	comment = &models.Comment{}
+	err = row.Scan(&comment.ID, &comment.UserID, &comment.PostID, &comment.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -106,19 +115,38 @@ func (r *CommentPostgres) GetByID(ctx context.Context, id int) (*models.Comment,
 }
 
 func (r *CommentPostgres) GetAll(ctx context.Context, limit, offset int) ([]*models.Comment, error) {
-	const query = `SELECT * 
-				   FROM comments
-				   LIMIT $1 OFFSET $2`
+	const subCommentQuery = `SELECT * 
+				   			 FROM comments
+				   			 WHERE parent_id IS NOT NULL
+				   			 LIMIT $1 OFFSET $2`
+	const commentQuery = `SELECT * 
+				   		  FROM comments
+				   		  WHERE parent_id IS NULL
+				   		  LIMIT $1 OFFSET $2`
 
-	rows, err := r.Pool.Query(ctx, query, limit, offset)
+	rows, err := r.Pool.Query(ctx, commentQuery, limit, offset)
 	if err != nil {
 		return nil, err
 	}
 
-	comments, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByName[models.Comment])
+	comments, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*models.Comment, error) {
+		comment := &models.Comment{}
+		err := row.Scan(&comment.ID, &comment.UserID, &comment.PostID, &comment.Body)
+		return comment, err
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	return comments, nil
+	rows, err = r.Pool.Query(ctx, subCommentQuery, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+
+	subComments, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByName[models.Comment])
+	if err != nil {
+		return nil, err
+	}
+
+	return slices.Concat(comments, subComments), nil
 }
