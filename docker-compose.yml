@@ -4,17 +4,28 @@ services:
   postgres:
     image: postgres
     environment:
-      POSTGRES_USER: 'postgres'
-      POSTGRES_PASSWORD: 'qwerty'
-      POSTGRES_DB: 'postgres'
+      - POSTGRES_USER=${PG_USER:?username not set}
+      - POSTGRES_PASSWORD=${PG_PASSWORD:?db password not set}
+      - POSTGRES_DB=${PG_DB:?db name not set}
     ports:
       - "5432:5432"
+
+  migrate:
+    image: migrate/migrate
+    depends_on:
+      - postgres
+    environment:
+      - PG_URL=${PG_URL:?db url not set}
+    volumes:
+      - ./db/migrations:/migrations
+    command: -database "$PG_URL" -path migrations up
+
   app:
     depends_on:
       - postgres
     build: ./
     command: ./app
     environment:
-      - PG_PASSWORD=${PG_PASSWORD:?database password not set}
+      - PG_PASSWORD=${PG_PASSWORD:?db password not set}
     ports:
       - "8000:8000"

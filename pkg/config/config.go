@@ -18,9 +18,9 @@ type (
 	Postgres struct {
 		Host     string `env-required:"true" yaml:"host"`
 		Port     string `env-required:"true" yaml:"port"`
-		Username string `env-required:"true" yaml:"username"`
+		Username string `env-required:"true" yaml:"username" env:"PG_USER"`
 		Password string `env-required:"true" env:"PG_PASSWORD"`
-		DBName   string `env-required:"true" yaml:"dbname"`
+		DBName   string `env-required:"true" yaml:"dbname" env:"PG_DB"`
 		SSLMode  string `env-required:"true" yaml:"sslmode"`
 		PoolMax  int    `yaml:"poolmax"`
 	}
