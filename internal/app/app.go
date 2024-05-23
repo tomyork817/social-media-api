@@ -38,8 +38,9 @@ func Run(cfg *config.Config) {
 
 	postUC := usecase.NewPostUseCase(postRepo)
 	commentUC := usecase.NewCommentUseCase(commentRepo, postRepo)
+	subscriptionUC := usecase.NewSubscriptionUseCase()
 
-	router := graph.NewRouter(postUC, commentUC)
+	router := graph.NewRouter(postUC, commentUC, subscriptionUC)
 	httpServer := httpserver.New(router.Multiplexer, cfg.HTTP)
 
 	interrupt := make(chan os.Signal, 1)

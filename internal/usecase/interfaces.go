@@ -35,4 +35,10 @@ type (
 		GetById(ctx context.Context, id int) (*models.Comment, error)
 		GetMultiple(ctx context.Context, filter models.CommentFilter, limit, offset int) ([]*models.Comment, error)
 	}
+
+	Subscription interface {
+		CreateSubscription(userID, postID int) (<-chan *models.Comment, error)
+		DeleteSubscription(userID, postID int)
+		AddComment(comment *models.Comment)
+	}
 )

@@ -2,6 +2,7 @@ package graph
 
 import (
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"net/http"
 	"social-media-api/internal/controller/graph/generated"
@@ -13,14 +14,16 @@ type Router struct {
 	Multiplexer   *http.ServeMux
 }
 
-func NewRouter(post usecase.Post, comment usecase.Comment) *Router {
+func NewRouter(post usecase.Post, comment usecase.Comment, subscription usecase.Subscription) *Router {
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{
-		Resolvers: &Resolver{PostUseCase: post, CommentUseCase: comment},
+		Resolvers: NewResolver(post, comment, subscription),
 	}))
+	srv.AddTransport(&transport.Websocket{})
+
 	mux := http.NewServeMux()
 
 	mux.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
-	mux.HandleFunc("POST /graphql", srv.ServeHTTP)
+	mux.Handle("/graphql", srv)
 
 	return &Router{
 		GraphQLServer: srv,

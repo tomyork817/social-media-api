@@ -28,11 +28,16 @@ func (r *mutationResolver) CreateComment(ctx context.Context, input model.Commen
 	if input.UserID <= 0 || input.PostID <= 0 || len(input.Body) > models.CommentBodyMaxLength {
 		return nil, models.ErrIncorrectCommentInput
 	}
-	return r.CommentUseCase.Create(ctx, models.Comment{
+	comment, err := r.CommentUseCase.Create(ctx, models.Comment{
 		UserID: input.UserID,
 		PostID: input.PostID,
 		Body:   input.Body,
 	})
+	if err != nil {
+		return nil, err
+	}
+	r.SubscriptionUseCase.AddComment(comment)
+	return comment, nil
 }
 
 // CreateSubComment is the resolver for the createSubComment field.
@@ -40,12 +45,17 @@ func (r *mutationResolver) CreateSubComment(ctx context.Context, input model.Sub
 	if input.UserID <= 0 || input.PostID <= 0 || input.ParentID <= 0 || len(input.Body) > models.CommentBodyMaxLength {
 		return nil, models.ErrIncorrectSubCommentInput
 	}
-	return r.CommentUseCase.Create(ctx, models.Comment{
+	comment, err := r.CommentUseCase.Create(ctx, models.Comment{
 		UserID:   input.UserID,
 		PostID:   input.PostID,
 		ParentID: input.PostID,
 		Body:     input.Body,
 	})
+	if err != nil {
+		return nil, err
+	}
+	r.SubscriptionUseCase.AddComment(comment)
+	return comment, nil
 }
 
 // DisableComments is the resolver for the disableComments field.

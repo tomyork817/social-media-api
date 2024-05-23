@@ -25,3 +25,6 @@ type SubCommentInput struct {
 	ParentID int    `json:"parentID"`
 	Body     string `json:"body"`
 }
+
+type Subscription struct {
+}

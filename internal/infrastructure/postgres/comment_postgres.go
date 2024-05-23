@@ -16,16 +16,32 @@ func NewCommentPostgres(postgres *postgres.Postgres) *CommentPostgres {
 }
 
 func (r *CommentPostgres) Save(ctx context.Context, comment models.Comment) (*models.Comment, error) {
-	const query = `INSERT INTO comments (user_id, post_id, parent_id, body) 
-				   VALUES ($1, $2, $3, $4)
-				   RETURNING id, user_id, post_id, parent_id, body`
+	const commentQuery = `INSERT INTO comments (user_id, post_id, body) 
+				   		  VALUES ($1, $2, $3)
+				   		  RETURNING id, user_id, post_id, body`
+	const subCommentQuery = `INSERT INTO comments (user_id, post_id, parent_id, body) 
+				   			 VALUES ($1, $2, $3, $4)
+				   			 RETURNING id, user_id, post_id, parent_id, body`
 
-	rows, err := r.Pool.Query(ctx, query, comment.UserID, comment.PostID, comment.ParentID, comment.Body)
-	if err != nil {
-		return nil, err
+	var rows pgx.Rows
+	var err error
+	if comment.ParentID != 0 {
+		rows, err = r.Pool.Query(ctx, subCommentQuery, comment.UserID, comment.PostID, comment.ParentID, comment.Body)
+		if err != nil {
+			return nil, err
+		}
+		commentRes, err := pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByName[models.Comment])
+		if err != nil {
+			return nil, err
+		}
+
+		return commentRes, nil
 	}
 
-	commentRes, err := pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByName[models.Comment])
+	row := r.Pool.QueryRow(ctx, commentQuery, comment.UserID, comment.PostID, comment.Body)
+
+	commentRes := &models.Comment{}
+	err = row.Scan(&commentRes.ID, &commentRes.UserID, &commentRes.PostID, &commentRes.Body)
 	if err != nil {
 		return nil, err
 	}
