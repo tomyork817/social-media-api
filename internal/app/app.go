@@ -42,8 +42,6 @@ func Run(cfg *config.Config) {
 	router := graph.NewRouter(postUC, commentUC)
 	httpServer := httpserver.New(router.Multiplexer, cfg.HTTP)
 
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", cfg.HTTP.Port)
-
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
 

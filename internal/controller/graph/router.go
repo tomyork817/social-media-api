@@ -19,8 +19,8 @@ func NewRouter(post usecase.Post, comment usecase.Comment) *Router {
 	}))
 	mux := http.NewServeMux()
 
-	mux.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	mux.HandleFunc("POST /query", srv.ServeHTTP)
+	mux.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
+	mux.HandleFunc("POST /graphql", srv.ServeHTTP)
 
 	return &Router{
 		GraphQLServer: srv,
