@@ -43,5 +43,5 @@ func (uc *CommentUseCase) GetMultiple(ctx context.Context, filter models.Comment
 }
 
 func (uc *CommentUseCase) GetById(ctx context.Context, id int) (*models.Comment, error) {
-	return uc.GetById(ctx, id)
+	return uc.commentRepo.GetByID(ctx, id)
 }
