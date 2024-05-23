@@ -1,4 +1,4 @@
-FROM golang:1.22 as builder
+FROM golang:1.22-alpine as builder
 
 WORKDIR /build
 
@@ -9,7 +9,7 @@ RUN go mod download
 RUN go build -o app ./cmd/app/main.go
 
 
-FROM ubuntu
+FROM alpine
 
 WORKDIR /root/
 
