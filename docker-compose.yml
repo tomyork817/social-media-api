@@ -9,11 +9,17 @@ services:
       - POSTGRES_DB=${PG_DB:?db name not set}
     ports:
       - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   migrate:
     image: migrate/migrate
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     environment:
       - PG_URL=${PG_URL:?db url not set}
     volumes:
@@ -22,7 +28,8 @@ services:
 
   app:
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     build: ./
     command: ./app
     environment:
