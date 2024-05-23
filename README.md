@@ -134,7 +134,7 @@ mutation CreateComment {
 
 ```graphql
 subscription {
-  newComment(userID:1 postID:1) {
+  newComment(userID: 1 postID: 1) {
     id
     body
   }
