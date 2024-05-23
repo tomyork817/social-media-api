@@ -3,7 +3,7 @@ http:
 
 postgres:
   username: 'postgres'
-  host: 'localhost'
+  host: 'postgres'
   port: '5432'
   dbname: 'postgres'
   sslmode: 'disable'

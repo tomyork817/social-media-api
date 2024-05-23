@@ -2,7 +2,6 @@ package config
 
 import (
 	"github.com/ilyakaznacheev/cleanenv"
-	"github.com/joho/godotenv"
 )
 
 type (
@@ -33,10 +32,6 @@ type (
 
 func NewConfig() (*Config, error) {
 	cfg := &Config{}
-
-	if err := godotenv.Load(); err != nil {
-		return nil, err
-	}
 
 	if err := cleanenv.ReadConfig("./config/config.yml", cfg); err != nil {
 		return nil, err
