@@ -49,7 +49,7 @@ func (r *CommentPostgres) Save(ctx context.Context, comment models.Comment) (*mo
 }
 
 func (r *CommentPostgres) GetByPostID(ctx context.Context, postID int, limit, offset int) ([]*models.Comment, error) {
-	const query = `SELECT * 
+	const query = `SELECT id, user_id, post_id, body 
 				   FROM comments
 				   WHERE post_id = $1 AND parent_id IS NULL
 				   LIMIT $2 OFFSET $3`
@@ -119,7 +119,7 @@ func (r *CommentPostgres) GetAll(ctx context.Context, limit, offset int) ([]*mod
 				   			 FROM comments
 				   			 WHERE parent_id IS NOT NULL
 				   			 LIMIT $1 OFFSET $2`
-	const commentQuery = `SELECT * 
+	const commentQuery = `SELECT id, user_id, post_id, body
 				   		  FROM comments
 				   		  WHERE parent_id IS NULL
 				   		  LIMIT $1 OFFSET $2`
