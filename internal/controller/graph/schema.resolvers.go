@@ -84,11 +84,14 @@ func (r *queryResolver) Post(ctx context.Context, id int) (*models.Post, error) 
 }
 
 // Comments is the resolver for the comments field.
-func (r *queryResolver) Comments(ctx context.Context, filter models.CommentFilter, limit *int, offset *int) ([]*models.Comment, error) {
+func (r *queryResolver) Comments(ctx context.Context, filter *models.CommentFilter, limit *int, offset *int) ([]*models.Comment, error) {
 	if *limit <= 0 || *offset < 0 {
 		return nil, models.ErrIncorrectPaging
 	}
-	return r.CommentUseCase.GetMultiple(ctx, filter, *limit, *offset)
+	if filter == nil {
+		filter = &models.CommentFilter{}
+	}
+	return r.CommentUseCase.GetMultiple(ctx, *filter, *limit, *offset)
 }
 
 // Comment is the resolver for the comment field.

@@ -32,6 +32,11 @@ func (m *MockCommentRepo) GetByParentID(ctx context.Context, parentID int, limit
 	return args.Get(0).([]*models.Comment), args.Error(1)
 }
 
+func (m *MockCommentRepo) GetAll(ctx context.Context, limit, offset int) ([]*models.Comment, error) {
+	args := m.Called(ctx, limit, offset)
+	return args.Get(0).([]*models.Comment), args.Error(1)
+}
+
 func TestCommentUseCaseCreate(t *testing.T) {
 	mockCommentRepo := new(MockCommentRepo)
 	mockPostRepo := new(MockPostRepo)

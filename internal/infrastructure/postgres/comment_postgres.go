@@ -88,3 +88,21 @@ func (r *CommentPostgres) GetByID(ctx context.Context, id int) (*models.Comment,
 
 	return comment, nil
 }
+
+func (r *CommentPostgres) GetAll(ctx context.Context, limit, offset int) ([]*models.Comment, error) {
+	const query = `SELECT * 
+				   FROM comments
+				   LIMIT $1 OFFSET $2`
+
+	rows, err := r.Pool.Query(ctx, query, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+
+	comments, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByName[models.Comment])
+	if err != nil {
+		return nil, err
+	}
+
+	return comments, nil
+}

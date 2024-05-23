@@ -76,7 +76,7 @@ type ComplexityRoot struct {
 
 	Query struct {
 		Comment  func(childComplexity int, id int) int
-		Comments func(childComplexity int, filter models.CommentFilter, limit *int, offset *int) int
+		Comments func(childComplexity int, filter *models.CommentFilter, limit *int, offset *int) int
 		Post     func(childComplexity int, id int) int
 		Posts    func(childComplexity int, filter *models.PostFilter, limit *int, offset *int) int
 	}
@@ -98,7 +98,7 @@ type PostResolver interface {
 type QueryResolver interface {
 	Posts(ctx context.Context, filter *models.PostFilter, limit *int, offset *int) ([]*models.Post, error)
 	Post(ctx context.Context, id int) (*models.Post, error)
-	Comments(ctx context.Context, filter models.CommentFilter, limit *int, offset *int) ([]*models.Comment, error)
+	Comments(ctx context.Context, filter *models.CommentFilter, limit *int, offset *int) ([]*models.Comment, error)
 	Comment(ctx context.Context, id int) (*models.Comment, error)
 }
 
@@ -290,7 +290,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Comments(childComplexity, args["filter"].(models.CommentFilter), args["limit"].(*int), args["offset"].(*int)), true
+		return e.complexity.Query.Comments(childComplexity, args["filter"].(*models.CommentFilter), args["limit"].(*int), args["offset"].(*int)), true
 
 	case "Query.post":
 		if e.complexity.Query.Post == nil {
@@ -472,7 +472,7 @@ input PostInput {
     posts(filter: PostFilter, limit: Int = 10, offset: Int = 0): [Post!]!
     post(id: ID!): Post!
 
-    comments(filter: CommentFilter!, limit: Int = 10, offset: Int = 0): [Comment!]!
+    comments(filter: CommentFilter, limit: Int = 10, offset: Int = 0): [Comment!]!
     comment(id: ID!): Comment!
 }
 
@@ -647,10 +647,10 @@ func (ec *executionContext) field_Query_comment_args(ctx context.Context, rawArg
 func (ec *executionContext) field_Query_comments_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 models.CommentFilter
+	var arg0 *models.CommentFilter
 	if tmp, ok := rawArgs["filter"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
-		arg0, err = ec.unmarshalNCommentFilter2socialᚑmediaᚑapiᚋinternalᚋmodelsᚐCommentFilter(ctx, tmp)
+		arg0, err = ec.unmarshalOCommentFilter2ᚖsocialᚑmediaᚑapiᚋinternalᚋmodelsᚐCommentFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1781,7 +1781,7 @@ func (ec *executionContext) _Query_comments(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Comments(rctx, fc.Args["filter"].(models.CommentFilter), fc.Args["limit"].(*int), fc.Args["offset"].(*int))
+		return ec.resolvers.Query().Comments(rctx, fc.Args["filter"].(*models.CommentFilter), fc.Args["limit"].(*int), fc.Args["offset"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4795,11 +4795,6 @@ func (ec *executionContext) marshalNComment2ᚖsocialᚑmediaᚑapiᚋinternal�
 	return ec._Comment(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNCommentFilter2socialᚑmediaᚑapiᚋinternalᚋmodelsᚐCommentFilter(ctx context.Context, v interface{}) (models.CommentFilter, error) {
-	res, err := ec.unmarshalInputCommentFilter(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalNCommentInput2socialᚑmediaᚑapiᚋinternalᚋcontrollerᚋgraphᚋmodelᚐCommentInput(ctx context.Context, v interface{}) (model.CommentInput, error) {
 	res, err := ec.unmarshalInputCommentInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -5180,6 +5175,14 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOCommentFilter2ᚖsocialᚑmediaᚑapiᚋinternalᚋmodelsᚐCommentFilter(ctx context.Context, v interface{}) (*models.CommentFilter, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputCommentFilter(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOID2int(ctx context.Context, v interface{}) (int, error) {

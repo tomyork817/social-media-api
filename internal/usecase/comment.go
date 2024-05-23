@@ -39,7 +39,7 @@ func (uc *CommentUseCase) GetMultiple(ctx context.Context, filter models.Comment
 	if filter.ParentID != 0 {
 		return uc.commentRepo.GetByParentID(ctx, filter.ParentID, limit, offset)
 	}
-	return nil, models.ErrIncorrectFilter
+	return uc.commentRepo.GetAll(ctx, limit, offset)
 }
 
 func (uc *CommentUseCase) GetById(ctx context.Context, id int) (*models.Comment, error) {

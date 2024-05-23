@@ -16,7 +16,7 @@ type (
 
 	CommentRepo interface {
 		Save(ctx context.Context, comment models.Comment) (*models.Comment, error)
-		// GetAll(ctx context.Context, limit, offset int) ([]*models.Comment, error)
+		GetAll(ctx context.Context, limit, offset int) ([]*models.Comment, error)
 		GetByPostID(ctx context.Context, postID int, limit, offset int) ([]*models.Comment, error)
 		GetByParentID(ctx context.Context, parentID int, limit, offset int) ([]*models.Comment, error)
 		GetByID(ctx context.Context, id int) (*models.Comment, error)

@@ -93,3 +93,28 @@ func (r *CommentInMemory) GetByID(ctx context.Context, id int) (*models.Comment,
 	}
 	return comment, nil
 }
+
+func (r *CommentInMemory) GetAll(ctx context.Context, limit, offset int) ([]*models.Comment, error) {
+	comments := make([]*models.Comment, 0)
+	r.lock.Lock()
+	for _, comment := range r.data {
+		comments = append(comments, comment)
+	}
+	r.lock.Unlock()
+
+	slices.SortFunc(comments, func(a, b *models.Comment) int {
+		return cmp.Compare(a.ID, b.ID)
+	})
+
+	start := offset
+	end := start + limit
+	if start > len(comments) {
+		start = len(comments)
+		end = len(comments)
+	}
+	if end > len(comments) {
+		end = len(comments)
+	}
+
+	return comments[start:end], nil
+}

@@ -2,7 +2,7 @@ type Query {
     posts(filter: PostFilter, limit: Int = 10, offset: Int = 0): [Post!]!
     post(id: ID!): Post!
 
-    comments(filter: CommentFilter!, limit: Int = 10, offset: Int = 0): [Comment!]!
+    comments(filter: CommentFilter, limit: Int = 10, offset: Int = 0): [Comment!]!
     comment(id: ID!): Comment!
 }
 
